@@ -1,25 +1,29 @@
 library(keras)
 library(neuralnet)
 
-
+#Get data
 data <- read.csv(url('http://archive.ics.uci.edu/ml/machine-learning-databases/liver-disorders/bupa.data'),
-                 header = FALSE)
+                 header=F)
+
+#Modify data
 data <- as.matrix(data)
 
 data[, 1:6] <- normalize(data[, 1:6])
 data[, 7] <- as.numeric(data[, 7]) -1
-summary(data)
 
+#Set random seed
 set.seed(7)
+
+# Split data 70/30 for training/testing
 ind <- sample(2, nrow(data), replace = T, prob = c(0.7, 0.3))
 training <- data[ind==1, 1:6]
 test <- data[ind==2, 1:6]
 trainingtarget <- data[ind==1,7]
 testtarget <- data[ind==2, 7]
 
+#Create matrix of outcome variables
 trainlabel <- to_categorical(trainingtarget)
 testlabel <- to_categorical(testtarget)
-print(trainlabel)
 
 # Model
 model <- keras_model_sequential()
@@ -28,7 +32,7 @@ model %>%
   layer_dense(units = 50, activation = 'relu', input_shape = c(6)) %>%
   layer_dropout(rate = 0.4) %>%
   layer_dense(units = 25, activation = 'relu') %>%
-  layer_dropout(rate = 0.3) %>%
+  layer_dropout(rate = 0.2) %>%
   layer_dense(units = 10, activation = 'relu') %>%
   layer_dropout(rate = 0.2) %>%
   layer_dense(units = 2, activation = 'softmax')
@@ -47,6 +51,7 @@ history <- model %>%
       batch_size = 32,
       validation_split = 0.2)
 
+#Plot loss, val_loss
 plot(history)
 
 #Evaluate model
@@ -65,7 +70,7 @@ table(Predicted = pred, Actual = testtarget)
 
 cbind(prob, pred, testtarget)
 
-# Neural Network Visualization
+# Neural Network Visualization... just an example
 n <- neuralnet(V7 ~ V1+V2+V3+V4+V5+V6,
                data = data,
                hidden = c(10,5),
