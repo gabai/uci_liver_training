@@ -1,5 +1,19 @@
+---
+  # Title:
+  # Objective:
+---
+# pkgs <- c("keras", "lime", "tidyquant", "rsample", "recipes", "yardstick", "corrr")
+# install.packages(pkgs)
+
+
 library(keras)
 library(neuralnet)
+library(lime)
+library(tidyquant)
+library(rsample)
+library(recipes)
+library(yardstick)
+library(corrr)
 
 #Get data
 data <- read.csv(url('http://archive.ics.uci.edu/ml/machine-learning-databases/liver-disorders/bupa.data'),
@@ -70,19 +84,26 @@ table(Predicted = pred, Actual = testtarget)
 
 cbind(prob, pred, testtarget)
 
-# Neural Network Visualization... just an example
-n <- neuralnet(V7 ~ V1+V2+V3+V4+V5+V6,
-               data = data,
-               hidden = c(10,5),
-               linear.output = F,
-               lifesign = 'full',
-               rep = 1)
+# # TEST - Explain with LIME
+# explainer <- lime(data[-training,], model, bin_continuous = TRUE, quantile_bins = FALSE)
+# explanation <- explain(data[training, ], explainer, n_labels = 1, n_features = 4)
+# # Only showing part of output for better printing
+# explanation[, 2:9]
 
-plot(n,
-     col.hidden = 'darkgreen',
-     col.hidden.synapse = 'darkgreen',
-     show.weights = F,
-     information = F,
-     fill = 'lightblue'
-)
+
+# Neural Network Visualization... just an example
+# n <- neuralnet(V7 ~ V1+V2+V3+V4+V5+V6,
+#                data = data,
+#                hidden = c(10,5),
+#                linear.output = F,
+#                lifesign = 'full',
+#                rep = 1)
+# 
+# plot(n,
+#      col.hidden = 'darkgreen',
+#      col.hidden.synapse = 'darkgreen',
+#      show.weights = F,
+#      information = F,
+#      fill = 'lightblue'
+# )
 
